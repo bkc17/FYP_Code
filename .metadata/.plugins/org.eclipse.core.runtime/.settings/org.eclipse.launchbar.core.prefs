@@ -1,0 +1,12 @@
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=win32
+configDescList=org.eclipse.launchbar.core.descriptorType.default\:adc_ranger_cc2650_launchxl,org.eclipse.launchbar.core.descriptorType.default\:project_zero_stack_cc2650,org.eclipse.launchbar.core.descriptorType.default\:project_zero_app_cc2650launchxl,org.eclipse.launchbar.core.descriptorType.default\:energy_harvester_ble_app_cc2650_launchxl,org.eclipse.launchbar.core.descriptorType.default\:energy_harvester_ble_app_cc2650_5XD
+eclipse.preferences.version=1
+org.eclipse.launchbar.core.descriptorType.default\:adc_ranger_ble_app_cc2650_launchxl/activeLaunchMode=run
+org.eclipse.launchbar.core.descriptorType.default\:adc_ranger_ble_app_cc2650_launchxl/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
+org.eclipse.launchbar.core.descriptorType.default\:adc_ranger_cc2650_launchxl/activeLaunchMode=debug
+org.eclipse.launchbar.core.descriptorType.default\:adc_ranger_cc2650_launchxl/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
+org.eclipse.launchbar.core.descriptorType.default\:energy_harvester_ble_app_cc2650_5XD/activeLaunchMode=debug
+org.eclipse.launchbar.core.descriptorType.default\:energy_harvester_ble_app_cc2650_5XD/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
+org.eclipse.launchbar.core.descriptorType.default\:project_zero_app_cc2650launchxl/activeLaunchMode=debug
