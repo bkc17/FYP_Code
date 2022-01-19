@@ -85,7 +85,7 @@ uint16_t rtc_Hz; //set SCS task interval   // changed from 32 bits to 16, if the
 int16_t ADCGain; // changed from 32 bits to 16, if there is an error, change it back
 int16_t ADCOffset; // changed from 32 bits to 16, if there is an error, change it back
 int n = 0; //used in the for loop
-int p = 0; // used for increasing the transmission interval
+int incInterval = 0; // used for increasing the transmission interval
 extern int transInterval; // variable to control transmission rate
 
 // Ranger task Clock struct and last tick value
@@ -252,11 +252,11 @@ static void SC_processAdc(void) {
 //
 //	}
 
-	if (p < transInterval) {
-		p++; // keep increasing until it equals transInterval
+	if (incInterval < transInterval) {
+		incInterval++; // keep increasing until it equals transInterval
 	}
 
-	if (p == transInterval) {
+	if (incInterval == transInterval) {
 
 		// enable battery monitor enable
 		AONBatMonEnable();
@@ -422,7 +422,7 @@ static void SC_processAdc(void) {
 		ADC_SERVICE_GRADIENT, (uint8_t *) GradArray2, strlen(GradArray2));
 
 
-		p = 0; // reset p because we want it to process data every "transInterval" seconds
+		incInterval = 0; // reset incInterval because we want it to process data every "transInterval" seconds
 
 	}
 
