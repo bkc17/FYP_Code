@@ -364,9 +364,7 @@ static void SC_processAdc(void) {
 		ADC_SERVICE_SERV_UUID,
 		ADC_SERVICE_GRADIENT, (uint8_t *) GradArray2, strlen(GradArray2));
 
-
 		incInterval = 0; // reset incInterval because we want it to process data every "transInterval" seconds
-
 	}
 
 }
