@@ -63,19 +63,19 @@
 /*********************************************************************
  * GLOBAL VARIABLES
  */
-
+const int ARRAY_SIZE = 3; //Should be the same value as the ARRAY_SIZE constant from SCS code
 uint16_t VDDstatus; // changed from 32 bits to 16, if there is an error, change it back
 char VDDarray[4];
 char voltageArray[10];
-int16_t OmegaArray[5]; // changed from 32 bits to 16, if there is an error, change it back
+int16_t OmegaArray[ARRAY_SIZE]; // changed from 32 bits to 16, if there is an error, change it back
 uint32_t OmegaAve = 0;
 char OmegaAveArray[4];
 int Grad;
 char GradArray[4];
 char GradArray2[4];
 int16_t frequency; // changed from 32 bits to 16, if there is an error, change it back
-uint16_t time_high[5]; //Storage for 16 MSBs
-uint16_t time_low[5]; //Storage for 16 LSBs
+uint16_t time_high[ARRAY_SIZE]; //Storage for 16 MSBs
+uint16_t time_low[ARRAY_SIZE]; //Storage for 16 LSBs
 uint32_t time_tot; //Merge of time_high and time_low
 uint16_t rtc_Hz; //set SCS task interval   // changed from 32 bits to 16, if there is an error, change it back
 //For storing ADC parameters used in the ADC API for converting raw value to voltage
@@ -248,7 +248,7 @@ static void SC_processAdc(void) {
 		Task_sleep(25000 / Clock_tickPeriod);
 
 
-		for (n = 0; n < 3; n++) {
+		for (n = 0; n < ARRAY_SIZE; n++) {
 			// PIN_setOutputValue(ledPINHandle, IOID_3, 1);
 
 			//frequency
@@ -320,7 +320,7 @@ static void SC_processAdc(void) {
 		//we divide gradient by 2 because from the formula in the notes, we have to divide by 20*delta time and delta time is a parameter we
 		// can choose and we chose it to be 0.1 = 100 ms.
 
-		Grad = (-5*OmegaArray[1] + 5*OmegaArray[3])/3;
+		Grad = (5*OmegaArray[2]-5*OmegaArray[0])/3; //3 measurements correct formula
 
 
 		if (Grad >= 0 && Grad < 10) {
