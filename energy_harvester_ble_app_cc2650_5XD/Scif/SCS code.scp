@@ -16,7 +16,7 @@
     <pattr name="Run-time logging UART TX pin"></pattr>
     <task name="compHandle">
         <desc><![CDATA[]]></desc>
-        <tattr name="ARRAY_SIZE" type="expr" content="const" scope="task" min="0" max="65535">5</tattr>
+        <tattr name="ARRAY_SIZE" type="expr" content="const" scope="task" min="0" max="65535">3</tattr>
         <tattr name="output.ADCout" type="expr" content="struct" scope="task" min="-32768" max="32767">0</tattr>
         <tattr name="output.TimeOutHigh" desc="High bits for timer output" type="expr" content="struct" scope="task" min="0" max="65535">0</tattr>
         <tattr name="output.TimeOutHighArray" size="ARRAY_SIZE" type="expr" content="struct_array" scope="task" min="0" max="65535">0</tattr>
@@ -253,13 +253,14 @@ tdcSetTriggers(TDC_STARTTRIG_COMPA_HIGH,TDC_STOPTRIG_COMPA_LOW,0);
 
 tdcEnable();
 
-for(U16 n = 0; n < 5; n++){
+for(U16 n = 0; n < ARRAY_SIZE; n++){
 
     //Enable to the measurement to start synchoronously at first start trigger
     tdcArm(TDC_START_SYNC);
 
     //wait for TDC to stop triggering for 200ms
     tdcWaitUs(200000); //max input value allowed for this function is 250000 = 250ms
+    tdcWaitUs(100000);
     //Check that TDC has finished and not TIme out
     //tdcCheckDoneEv(state.compOut);
     //if(state.compOut == 1){
