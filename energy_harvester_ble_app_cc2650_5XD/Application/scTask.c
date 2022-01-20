@@ -251,13 +251,15 @@ static void SC_processAdc(void) {
 		for (n = 0; n < ARRAY_SIZE; n++) {
 			// PIN_setOutputValue(ledPINHandle, IOID_3, 1);
 
+			//waiting
+			Task_sleep(25000 / Clock_tickPeriod);
+
 			//frequency
 			time_high[n] = scifTaskData.compHandle.output.TimeOutHighArray[n];
 			time_low[n] = scifTaskData.compHandle.output.TimeOutLowArray[n];
 			time_tot = (time_high[n] << 16) + time_low[n]; //Merge high and low words
 
-			//waiting
-			Task_sleep(20000 / Clock_tickPeriod);
+
 
 			//Convert to frequency
 			frequency = 24000000 / time_tot; //Time_tot is time for half a cycle, see sensor controller code
