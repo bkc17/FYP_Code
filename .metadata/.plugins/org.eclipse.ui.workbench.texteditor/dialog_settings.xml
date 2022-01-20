@@ -2,12 +2,14 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="SC_ini" key="selection"/>
+		<item value="p " key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="p "/>
+			<item value="p"/>
 			<item value="sc_ini"/>
 			<item value="sc_"/>
 			<item value="sc"/>
@@ -21,8 +23,6 @@
 			<item value="IOID_$#"/>
 			<item value="advert"/>
 			<item value="name"/>
-			<item value="projectzero_init("/>
-			<item value="projectzero_init*"/>
 		</list>
 		<list key="replacehistory">
 		</list>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="energyHarvester" version="2.7.0.155">
+<project name="energyHarvester" version="2.6.0.132">
     <desc><![CDATA[Comparator and timer operation for calculating turbine frequency]]></desc>
     <pattr name="Apply default power mode">0</pattr>
     <pattr name="Board">CC2650 LaunchPad</pattr>
@@ -258,9 +258,8 @@ for(U16 n = 0; n < 5; n++){
     //Enable to the measurement to start synchoronously at first start trigger
     tdcArm(TDC_START_SYNC);
 
-    //wait for TDC to stop triggering for 100ms
-    tdcWaitUs(100000);
-
+    //wait for TDC to stop triggering for 200ms
+    tdcWaitUs(200000); //max input value allowed for this function is 250000 = 250ms
     //Check that TDC has finished and not TIme out
     //tdcCheckDoneEv(state.compOut);
     //if(state.compOut == 1){
