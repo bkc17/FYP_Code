@@ -253,21 +253,25 @@ tdcSetTriggers(TDC_STARTTRIG_COMPA_HIGH,TDC_STOPTRIG_COMPA_LOW,0);
 
 tdcEnable();
 
+//disabling the bq25505 chip before measurement
+//gpioSetOutput();
 for(U16 n = 0; n < ARRAY_SIZE; n++){
 
     //Enable to the measurement to start synchoronously at first start trigger
     tdcArm(TDC_START_SYNC);
 
     //wait for TDC to stop triggering for 200ms
-    tdcWaitUs(200000); //max input value allowed for this function is 250000 = 250ms
+    //tdcWaitUs(200000); //max input value allowed for this function is 250000 = 250ms
     tdcWaitUs(100000);
-    //Check that TDC has finished and not TIme out
+    //Check that TDC has finished and not Time out
     //tdcCheckDoneEv(state.compOut);
     //if(state.compOut == 1){
     tdcGetValue(output.TimeOutHighArray[n],output.TimeOutLowArray[n]);
     //}
-
 }
+//enabling the BQ25505 chip after measurement
+//gpioClearOutput();
+
 
 tdcDisable();
 
