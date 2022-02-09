@@ -245,7 +245,7 @@ static void SC_processAdc(void) {
 		//obtaining omega
 		//PIN_setOutputValue(ledPINHandle, IOID_11, 1);
 
-		Task_sleep(25000 / Clock_tickPeriod);
+		//Task_sleep(25000 / Clock_tickPeriod);
 
 
 		for (n = 0; n < ARRAY_SIZE; n++) {
@@ -322,7 +322,7 @@ static void SC_processAdc(void) {
 		//we divide gradient by 2 because from the formula in the notes, we have to divide by 20*delta time and delta time is a parameter we
 		// can choose and we chose it to be 0.1 = 100 ms.
 
-		Grad = (5*OmegaArray[2]-5*OmegaArray[0])/3; //3 measurements correct formula
+		Grad = (5*OmegaArray[2]-5*OmegaArray[0]); //formula for 3 measurements with 100ms wait time
 
 
 		if (Grad >= 0 && Grad < 10) {
