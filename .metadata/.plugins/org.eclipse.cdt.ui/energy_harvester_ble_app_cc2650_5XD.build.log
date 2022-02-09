@@ -20,7 +20,7 @@ Invoking: ARM Compiler
 "../Application/scTask.c", line 77: warning #2170-D: use of a const variable in a constant expression is nonstandard in C
 "../Application/scTask.c", line 78: warning #2170-D: use of a const variable in a constant expression is nonstandard in C
 "../Application/scTask.c", line 89: warning #179-D: variable "g_rangerLastTick" was declared but never referenced
-"../Application/scTask.c", line 388: warning #179-D: function "SC_processRanger" was declared but never referenced
+"../Application/scTask.c", line 394: warning #179-D: function "SC_processRanger" was declared but never referenced
 Finished building: "../Application/scTask.c"
  
 Building file: "../Scif/scif_framework.c"
