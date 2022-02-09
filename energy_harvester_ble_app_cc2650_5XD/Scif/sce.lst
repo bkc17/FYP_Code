@@ -422,7 +422,6 @@
                ;?
                ;? tdcEnable();
 00c3 ---- 1526                         jsr         TdcEnable
-               ;?
                ;? gpioSetOutput(AUXIO_O_BQDISABLE);
 00c4 ---- 670e                         iobset      #(3 & 0x7), [#(IOP_AIODIO0_GPIODOUT + (3 >> 3))]
                ;?
@@ -433,18 +432,21 @@
                ;?
                ;? for(U16 n = 0; n < ARRAY_SIZE; n++){
 00c8 ---- 0000                         ld          R0, #0
-               /id0208:
+               /id0209:
                ;?
                ;?     //Enable to the measurement to start synchoronously at first start trigger
+               ;?
                ;?     tdcArm(TDC_START_SYNC);
 00c9 ---- 7001                             ld          R7, #1
 00ca ---- 152a                             jsr         TdcArm
-               ;?
                ;?     //wait for TDC to stop triggering for 200ms
                ;?     //tdcWaitUs(200000); //max input value allowed for this function is 250000 = 250ms
-               ;?     tdcWaitUs(200000);
-00cb 8692 727c                             ld          R7, #(((200000 * 24) + ((1 << 7) - 1)) >> 7)
-00cd ---- 1536                             jsr         TdcWait
+               ;?     //tdcWaitUs(200000);
+               ;?     fwDelayUs(50000,FW_DELAY_RANGE_100_MS);
+00cb ---- 704a                             ld          R7, #(((50000 * 24 ) + ((1 << 14) - 1)) >> 14)
+00cc ---- 600e                             ld          R6, #14
+00cd ---- 14e2                             jsr         FwDelay
+               ;?     //fwDelayUs(50000,FW_DELAY_RANGE_100_MS);
                ;?     //Check that TDC has finished and not TIme out
                ;?     //tdcCheckDoneEv(state.compOut);
                ;?     //if(state.compOut == 1){
@@ -460,19 +462,19 @@
                ;? }
 00d4 ---- 8801                         add         R0, #1
 00d5 ---- 8a03                         cmp         R0, #3
-00d6 ---- aef2                         bltu        /id0208
+00d6 ---- aef2                         bltu        /id0209
                ;?
                ;? gpioClearOutput(AUXIO_O_BQDISABLE);
 00d7 ---- 470e                         iobclr      #(3 & 0x7), [#(IOP_AIODIO0_GPIODOUT + (3 >> 3))]
                ;?
                ;? tdcDisable();
-00d8 ---- 1542                         jsr         TdcDisable
+00d8 ---- 1536                         jsr         TdcDisable
                ;?
                ;? fwReleasePeripheral(PERIPHERAL_TDC);
 00d9 ---- 641b                         iobset      #0, [#(IOP_SMPH_SMPH0 + 1)]
                ;?
                ;? compaDisable();
-00da ---- 1548                         jsr         CompaDisable
+00da ---- 153c                         jsr         CompaDisable
                ;? fwGenAlertInterrupt();
 00db ---- 086c                         ld          R0, [#fwCtrlInt/bvTaskIoAlert]
 00dc ---- 8201                         or          R0, #(1 << 0)
@@ -701,46 +703,19 @@
 
 
 
-               ; PARAMETERS:
-               ;     R7 = Timer target value
-               ;
-               ; CLOBBERS:
-               ;     R7
-               TdcWait:
-                                       ; Start the timeout with ~5 us resolution
-0136 ---- fb0c                         out         R7, [#IOP_TIMER01_T0TARGET]
-0137 ---- 7070                         ld          R7, #(7 << 4);
-0138 ---- fb09                         out         R7, [#IOP_TIMER01_T0CFG]
-0139 ---- 7741                         iobset      #IOB_EVCTL_EVTOAON_TIMER0, [#IOP_EVCTL_EVTOAONFLAGSCLR]
-013a ---- 640b                         iobset      #0, [#IOP_TIMER01_T0CTL]
-
-                                       ; Wait until TDC done or timeout, whichever comes first
-013b 8650 f90c /waitLoop:              in          R7, [#IOP_EVCTL_EVTOAONFLAGS]
-013d ---- fcc0                         tst         R7, #((1 << IOB_EVCTL_EVTOAON_TDC_DONE) | (1 << IOB_EVCTL_EVTOAON_TIMER0))
-013e ---- b6fc                         bz          /waitLoop
-
-                                       ; Stop the timeout and clear the flag
-013f ---- 440b                         iobclr      #0, [#IOP_TIMER01_T0CTL]
-0140 ---- 7741                         iobset      #IOB_EVCTL_EVTOAON_TIMER0, [#IOP_EVCTL_EVTOAONFLAGSCLR]
-
-0141 ---- adb7                         rts
-
-
-
-
                ; CLOBBERS:
                ;     -
                TdcDisable:
                                        ; Abort the TDC
-0142 ---- 6003                         ld          R6, #0x0003
-0143 ---- eb04                         out         R6, [#IOP_TDC_CTL]
+0136 ---- 6003                         ld          R6, #0x0003
+0137 ---- eb04                         out         R6, [#IOP_TDC_CTL]
 
                                        ; Disable the TDC clock
-0144 ---- 4432                         iobclr      #IOB_WUC_TDCCLKCTL_REQ, [#IOP_WUC_TDCCLKCTL]
-0145 ---- 2532 /waitOnTdcclk:          iobtst      #IOB_WUC_TDCCLKCTL_ACK, [#IOP_WUC_TDCCLKCTL]
-0146 ---- aefe                         biob1       /waitOnTdcclk
+0138 ---- 4432                         iobclr      #IOB_WUC_TDCCLKCTL_REQ, [#IOP_WUC_TDCCLKCTL]
+0139 ---- 2532 /waitOnTdcclk:          iobtst      #IOB_WUC_TDCCLKCTL_ACK, [#IOP_WUC_TDCCLKCTL]
+013a ---- aefe                         biob1       /waitOnTdcclk
 
-0147 ---- adb7                         rts
+013b ---- adb7                         rts
 
 
 
@@ -749,22 +724,22 @@
                ;     R7
                CompaDisable:
                                        ; Disable COMPA
-0148 ---- 1462                         jsr         AdiDdiAcquire
-0149 86ff 7300                         ld          R7, #0xFF00
-014b ---- fb52                         out         R7, [#IOP_ADICLR_ISRC_COMP]
+013c ---- 1462                         jsr         AdiDdiAcquire
+013d 86ff 7300                         ld          R7, #0xFF00
+013f ---- fb52                         out         R7, [#IOP_ADICLR_ISRC_COMP]
 
                                        ; Ensure that it has taken effect
-014c ---- fd47                         nop         ; Workaround for back-to-back ADI/DDI accesses
-014d ---- fb52                         out         R7, [#IOP_ADICLR_ISRC_COMP]
-014e ---- 1465                         jsr         AdiDdiRelease
+0140 ---- fd47                         nop         ; Workaround for back-to-back ADI/DDI accesses
+0141 ---- fb52                         out         R7, [#IOP_ADICLR_ISRC_COMP]
+0142 ---- 1465                         jsr         AdiDdiRelease
 
                                        ; Disable BGAP request
-014f ---- 443c                         iobclr      #0, [#IOP_WUC_BGAPREQ]
-0150 ---- 243d /waitOnBgap:            iobtst      #0, [#IOP_WUC_BGAPACK]
-0151 ---- aefe                         biob1       /waitOnBgap
+0143 ---- 443c                         iobclr      #0, [#IOP_WUC_BGAPREQ]
+0144 ---- 243d /waitOnBgap:            iobtst      #0, [#IOP_WUC_BGAPACK]
+0145 ---- aefe                         biob1       /waitOnBgap
 
-0152 ---- adb7                         rts
+0146 ---- adb7                         rts
                .segment end "Procedure Library"
 
 
-; Generated by BHARAT-DELL-LAP at 2022-02-09 10:56:38.193
+; Generated by BHARAT-DELL-LAP at 2022-02-09 12:25:12.214

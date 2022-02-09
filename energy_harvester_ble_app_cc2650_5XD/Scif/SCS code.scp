@@ -290,7 +290,6 @@ fwAcquirePeripheral(PERIPHERAL_TDC);
 tdcSetTriggers(TDC_STARTTRIG_COMPA_HIGH,TDC_STOPTRIG_COMPA_LOW,0);
 
 tdcEnable();
-
 gpioSetOutput(AUXIO_O_BQDISABLE);
 
 fwDelayUs(25000,FW_DELAY_RANGE_50_MS);
@@ -298,11 +297,13 @@ fwDelayUs(25000,FW_DELAY_RANGE_50_MS);
 for(U16 n = 0; n < ARRAY_SIZE; n++){
 
     //Enable to the measurement to start synchoronously at first start trigger
-    tdcArm(TDC_START_SYNC);
 
+    tdcArm(TDC_START_SYNC);
     //wait for TDC to stop triggering for 200ms
     //tdcWaitUs(200000); //max input value allowed for this function is 250000 = 250ms
-    tdcWaitUs(200000);
+    //tdcWaitUs(200000);
+    fwDelayUs(50000,FW_DELAY_RANGE_100_MS);
+    //fwDelayUs(50000,FW_DELAY_RANGE_100_MS);
     //Check that TDC has finished and not TIme out
     //tdcCheckDoneEv(state.compOut);
     //if(state.compOut == 1){
