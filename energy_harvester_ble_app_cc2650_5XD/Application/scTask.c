@@ -322,8 +322,8 @@ static void SC_processAdc(void) {
 		//we divide gradient by 2 because from the formula in the notes, we have to divide by 20*delta time and delta time is a parameter we
 		// can choose and we chose it to be 0.1 = 100 ms.
 
-		Grad = (5*OmegaArray[2]-5*OmegaArray[0]); //formula for 3 measurements with 100ms wait time
-
+		//Grad = (5*OmegaArray[2]-5*OmegaArray[0]); //formula for 3 measurements with 100ms wait time
+		Grad = (5*OmegaArray[2]-5*OmegaArray[0])/2; //formula for 3 measurements with 200ms wait time
 
 		if (Grad >= 0 && Grad < 10) {
 			itoaAppendStr(GradArray2, Grad, "   ");

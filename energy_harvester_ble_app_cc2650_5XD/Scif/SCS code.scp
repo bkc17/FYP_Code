@@ -302,7 +302,7 @@ for(U16 n = 0; n < ARRAY_SIZE; n++){
 
     //wait for TDC to stop triggering for 200ms
     //tdcWaitUs(200000); //max input value allowed for this function is 250000 = 250ms
-    tdcWaitUs(100000);
+    tdcWaitUs(200000);
     //Check that TDC has finished and not TIme out
     //tdcCheckDoneEv(state.compOut);
     //if(state.compOut == 1){
