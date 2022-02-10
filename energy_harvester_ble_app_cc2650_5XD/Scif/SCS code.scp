@@ -17,6 +17,8 @@
     <task name="compHandle">
         <desc><![CDATA[]]></desc>
         <tattr name="ARRAY_SIZE" type="expr" content="const" scope="task" min="0" max="65535">3</tattr>
+        <tattr name="input.RotationEnable" desc="Enable the rotation calculation" type="expr" content="struct" scope="task" min="0" max="65535">0</tattr>
+        <tattr name="input.TempEnable" desc="Enables the code to read the temperature" type="expr" content="struct" scope="task" min="0" max="65535">0</tattr>
         <tattr name="output.ADCout" type="expr" content="struct" scope="task" min="-32768" max="32767">0</tattr>
         <tattr name="output.TimeOutHigh" desc="High bits for timer output" type="expr" content="struct" scope="task" min="0" max="65535">0</tattr>
         <tattr name="output.TimeOutHighArray" size="ARRAY_SIZE" type="expr" content="struct_array" scope="task" min="0" max="65535">0</tattr>
@@ -250,75 +252,80 @@
         <sccode name="event1" init_power_mode="0"><![CDATA[]]></sccode>
         <sccode name="event2" init_power_mode="0"><![CDATA[]]></sccode>
         <sccode name="event3" init_power_mode="0"><![CDATA[]]></sccode>
-        <sccode name="execute" init_power_mode="0"><![CDATA[fwAcquirePeripheral(PERIPHERAL_ADC);
+        <sccode name="execute" init_power_mode="0"><![CDATA[if(input.TempEnable == 1){
+    fwAcquirePeripheral(PERIPHERAL_ADC);
 
-// Set Temp_VDD high
-gpioSetOutput(AUXIO_O_TEMP_VDD);
+    // Set Temp_VDD high
+    gpioSetOutput(AUXIO_O_TEMP_VDD);
 
-fwDelayUs(2000,FW_DELAY_RANGE_2_MS);
+    fwDelayUs(2000,FW_DELAY_RANGE_2_MS);
 
-//Select ADC input
-adcSelectGpioInput(AUXIO_A_TEMP_VOUT);
+    //Select ADC input
+    adcSelectGpioInput(AUXIO_A_TEMP_VOUT);
 
-// Enable the ADC, 4.3v fixed ref and 2.73ms sample period
-adcEnableSync(ADC_REF_FIXED, ADC_SAMPLE_TIME_2P73_MS, ADC_TRIGGER_MANUAL);
+    // Enable the ADC, 4.3v fixed ref and 2.73ms sample period
+    adcEnableSync(ADC_REF_FIXED, ADC_SAMPLE_TIME_2P73_MS, ADC_TRIGGER_MANUAL);
 
-adcGenManualTrigger(); //trigger ADC
+    adcGenManualTrigger(); //trigger ADC
 
-adcReadFifo(output.ADCout); //Load value into output variable
+    adcReadFifo(output.ADCout); //Load value into output variable
 
-adcDisable(); //Turn off ADC to save power
+    adcDisable(); //Turn off ADC to save power
 
-fwReleasePeripheral(PERIPHERAL_ADC);
+    fwReleasePeripheral(PERIPHERAL_ADC);
 
-gpioClearOutput(AUXIO_O_TEMP_VDD);
-
-//Select 48 MHz from RCOSC_HF as TDC counter clock source
-tdcSetCntSource(TDC_CNTSRC_96M_RCOSC);
-
-//Enable COMPA
-compaEnable();
-
-//Select COMPA reference and input
-compaSelectGpioRef(AUXIO_A_COMP1);
-
-compaSelectGpioInput(AUXIO_A_COMP2);
-
-fwAcquirePeripheral(PERIPHERAL_TDC);
-
-//Enable TDC, start with trigger on first rising edge, and stop on first subsequent falling edge
-tdcSetTriggers(TDC_STARTTRIG_COMPA_HIGH,TDC_STOPTRIG_COMPA_LOW,0);
-
-tdcEnable();
-gpioSetOutput(AUXIO_O_BQDISABLE);
-
-fwDelayUs(25000,FW_DELAY_RANGE_50_MS);
-
-for(U16 n = 0; n < ARRAY_SIZE; n++){
-
-    //Enable to the measurement to start synchoronously at first start trigger
-
-    tdcArm(TDC_START_SYNC);
-    //wait for TDC to stop triggering for 200ms
-    //tdcWaitUs(200000); //max input value allowed for this function is 250000 = 250ms
-    //tdcWaitUs(200000);
-    fwDelayUs(50000,FW_DELAY_RANGE_100_MS);
-    //fwDelayUs(50000,FW_DELAY_RANGE_100_MS);
-    //Check that TDC has finished and not TIme out
-    //tdcCheckDoneEv(state.compOut);
-    //if(state.compOut == 1){
-    tdcGetValue(output.TimeOutHighArray[n],output.TimeOutLowArray[n]);
-    //}
-
+    gpioClearOutput(AUXIO_O_TEMP_VDD);
 }
 
-gpioClearOutput(AUXIO_O_BQDISABLE);
+if(input.RotationEnable == 1){
+    //Select 48 MHz from RCOSC_HF as TDC counter clock source
+    tdcSetCntSource(TDC_CNTSRC_96M_RCOSC);
 
-tdcDisable();
+    //Enable COMPA
+    compaEnable();
 
-fwReleasePeripheral(PERIPHERAL_TDC);
+    //Select COMPA reference and input
+    compaSelectGpioRef(AUXIO_A_COMP1);
 
-compaDisable();
+    compaSelectGpioInput(AUXIO_A_COMP2);
+
+    fwAcquirePeripheral(PERIPHERAL_TDC);
+
+    //Enable TDC, start with trigger on first rising edge, and stop on first subsequent falling edge
+    tdcSetTriggers(TDC_STARTTRIG_COMPA_HIGH,TDC_STOPTRIG_COMPA_LOW,0);
+
+    tdcEnable();
+
+    gpioSetOutput(AUXIO_O_BQDISABLE);
+
+    fwDelayUs(25000,FW_DELAY_RANGE_50_MS);
+
+    for(U16 n = 0; n < ARRAY_SIZE; n++){
+
+        //Enable to the measurement to start synchoronously at first start trigger
+
+        tdcArm(TDC_START_SYNC);
+        //wait for TDC to stop triggering for 200ms
+        //tdcWaitUs(200000); //max input value allowed for this function is 250000 = 250ms
+        tdcWaitUs(200000);
+        //fwDelayUs(100000,FW_DELAY_RANGE_100_MS);
+        //fwDelayUs(50000,FW_DELAY_RANGE_100_MS);
+        //Check that TDC has finished and not TIme out
+        //tdcCheckDoneEv(state.compOut);
+        //if(state.compOut == 1){
+        tdcGetValue(output.TimeOutHighArray[n],output.TimeOutLowArray[n]);
+        //}
+
+    }
+
+    gpioClearOutput(AUXIO_O_BQDISABLE);
+
+    tdcDisable();
+
+    fwReleasePeripheral(PERIPHERAL_TDC);
+
+    compaDisable();
+}
 fwGenAlertInterrupt();
 fwScheduleTask(1);]]></sccode>
         <sccode name="initialize" init_power_mode="0"><![CDATA[fwScheduleTask(1);]]></sccode>
