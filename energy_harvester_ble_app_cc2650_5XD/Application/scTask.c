@@ -199,8 +199,8 @@ static void SC_processAdc(void) {
 	}
 
 	if (incInterval == transInterval) {
-
-		scifTaskData.compHandle.input.TempEnable = 0;
+		//PIN_setOutputValue(ledPINHandle, IOID_3, 1);
+		scifTaskData.compHandle.input.TempEnable = 0	;
 		scifTaskData.compHandle.input.RotationEnable = 1;
 
 		// enable battery monitor enable
@@ -260,8 +260,6 @@ static void SC_processAdc(void) {
 			time_high[n] = scifTaskData.compHandle.output.TimeOutHighArray[n];
 			time_low[n] = scifTaskData.compHandle.output.TimeOutLowArray[n];
 			time_tot = (time_high[n] << 16) + time_low[n]; //Merge high and low words
-
-
 
 			//Convert to frequency
 			frequency = 24000000 / time_tot; //Time_tot is time for half a cycle, see sensor controller code

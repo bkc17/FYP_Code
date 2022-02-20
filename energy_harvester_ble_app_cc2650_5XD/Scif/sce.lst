@@ -323,14 +323,16 @@
 
 
                compHandle/execute:
+               ;? //gpioSetOutput(AUXIO_O_VDDHOLD);
+               ;?
                ;? if(input.TempEnable == 1){
 0084 ---- 0876                         ld          R0, [#compHandle/input/TempEnable]
 0085 ---- 8a01                         cmp         R0, #1
-0086 ---- be27                         bneq        /id0176
+0086 ---- be27                         bneq        /id0177
                ;?     fwAcquirePeripheral(PERIPHERAL_ADC);
-               /id0178:
+               /id0179:
 0087 ---- 241c                             iobtst      #0, [#(IOP_SMPH_SMPH0 + 2)]
-0088 ---- a6fe                             biob0       /id0178
+0088 ---- a6fe                             biob0       /id0179
                ;?
                ;?     // Set Temp_VDD high
                ;?     gpioSetOutput(AUXIO_O_TEMP_VDD);
@@ -348,19 +350,19 @@
                ;?
                ;?     // Enable the ADC, 4.3v fixed ref and 2.73ms sample period
                ;?     adcEnableSync(ADC_REF_FIXED, ADC_SAMPLE_TIME_2P73_MS, ADC_TRIGGER_MANUAL);
-008f ---- f502                             loop        #128, /id0184
+008f ---- f502                             loop        #128, /id0185
 0090 ---- fd47                             nop
 0091 ---- fd47                             nop
 0092 ---- fd47                             nop
-               /id0184:
+               /id0185:
 0093 ---- 7001                             ld          R7, #((0 | (((13 < 6) & (!0)) * ADI16_ADCREF_REF_ON_IDLE)) | ADI16_ADCREF_EN)
 0094 ---- 1462                             jsr         AdiDdiAcquire
 0095 ---- fb4d                             out         R7, [#IOP_ADISET_ADCREF]
 0096 8609 7101                             ld          R7, #((9 << IOB_ANAIF_ADCCTL_START_SRC) | 0x0001)
 0098 ---- 6431                             iobset      #IOB_WUC_ADCCLKCTL_REQ, [#IOP_WUC_ADCCLKCTL]
-               /id0185:
+               /id0186:
 0099 ---- 2531                             iobtst      #IOB_WUC_ADCCLKCTL_ACK, [#IOP_WUC_ADCCLKCTL]
-009a ---- a6fe                             biob0       /id0185
+009a ---- a6fe                             biob0       /id0186
 009b ---- fb00                             out         R7, [#IOP_ANAIF_ADCCTL]
 009c ---- 7078                             ld          R7, #BV_ADI16_ADC_SMPL_CYCLE_EXP
 009d ---- fb54                             out         R7, [#IOP_ADICLR_ADC]
@@ -391,12 +393,12 @@
                ;?     gpioClearOutput(AUXIO_O_TEMP_VDD);
 00ad ---- 570e                             iobclr      #(7 & 0x7), [#(IOP_AIODIO0_GPIODOUT + (7 >> 3))]
                ;? }
-               /id0176:
+               /id0177:
                ;?
                ;? if(input.RotationEnable == 1){
 00ae ---- 0875                         ld          R0, [#compHandle/input/RotationEnable]
 00af ---- 8a01                         cmp         R0, #1
-00b0 ---- be32                         bneq        /id0191
+00b0 ---- be32                         bneq        /id0192
                ;?     //Select 48 MHz from RCOSC_HF as TDC counter clock source
                ;?     tdcSetCntSource(TDC_CNTSRC_96M_RCOSC);
 00b1 ---- 1462                             jsr         AdiDdiAcquire
@@ -422,9 +424,9 @@
 00c0 ---- 1521                             jsr         CompaSelectGpioInput
                ;?
                ;?     fwAcquirePeripheral(PERIPHERAL_TDC);
-               /id0201:
+               /id0202:
 00c1 ---- 241b                             iobtst      #0, [#(IOP_SMPH_SMPH0 + 1)]
-00c2 ---- a6fe                             biob0       /id0201
+00c2 ---- a6fe                             biob0       /id0202
                ;?
                ;?     //Enable TDC, start with trigger on first rising edge, and stop on first subsequent falling edge
                ;?     tdcSetTriggers(TDC_STARTTRIG_COMPA_HIGH,TDC_STOPTRIG_COMPA_LOW,0);
@@ -447,7 +449,7 @@
                ;?
                ;?     for(U16 n = 0; n < ARRAY_SIZE; n++){
 00d0 ---- 0000                             ld          R0, #0
-               /id0214:
+               /id0215:
                ;?
                ;?         //Enable to the measurement to start synchoronously at first start trigger
                ;?
@@ -476,7 +478,7 @@
                ;?     }
 00dc ---- 8801                             add         R0, #1
 00dd ---- 8a03                             cmp         R0, #3
-00de ---- aef2                             bltu        /id0214
+00de ---- aef2                             bltu        /id0215
                ;?
                ;?     gpioClearOutput(AUXIO_O_BQDISABLE);
 00df ---- 470e                             iobclr      #(3 & 0x7), [#(IOP_AIODIO0_GPIODOUT + (3 >> 3))]
@@ -490,7 +492,7 @@
                ;?     compaDisable();
 00e2 ---- 1550                             jsr         CompaDisable
                ;? }
-               /id0191:
+               /id0192:
                ;? fwGenAlertInterrupt();
 00e3 ---- 086c                         ld          R0, [#fwCtrlInt/bvTaskIoAlert]
 00e4 ---- 8201                         or          R0, #(1 << 0)
@@ -785,4 +787,4 @@
                .segment end "Procedure Library"
 
 
-; Generated by BHARAT-DELL-LAP at 2022-02-10 11:44:45.380
+; Generated by BHARAT-DELL-LAP at 2022-02-14 14:50:15.469

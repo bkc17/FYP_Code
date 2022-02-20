@@ -2,12 +2,15 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="p " key="selection"/>
+		<item value="IOID_3" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="ioid_3"/>
+			<item value="ioid_11"/>
+			<item value="array"/>
 			<item value="p "/>
 			<item value="p"/>
 			<item value="sc_ini"/>
@@ -20,9 +23,6 @@
 			<item value="LED_pin"/>
 			<item value="Board_LED4"/>
 			<item value="IOID_4"/>
-			<item value="IOID_$#"/>
-			<item value="advert"/>
-			<item value="name"/>
 		</list>
 		<list key="replacehistory">
 		</list>
