@@ -16,7 +16,7 @@
     <pattr name="Run-time logging UART TX pin"></pattr>
     <task name="compHandle">
         <desc><![CDATA[]]></desc>
-        <tattr name="ARRAY_SIZE" type="expr" content="const" scope="task" min="0" max="65535">3</tattr>
+        <tattr name="ARRAY_SIZE" type="expr" content="const" scope="task" min="0" max="65535">5</tattr>
         <tattr name="input.RotationEnable" desc="Enable the rotation calculation" type="expr" content="struct" scope="task" min="0" max="65535">0</tattr>
         <tattr name="input.TempEnable" desc="Enables the code to read the temperature" type="expr" content="struct" scope="task" min="0" max="65535">0</tattr>
         <tattr name="output.ADCout" type="expr" content="struct" scope="task" min="-32768" max="32767">0</tattr>
@@ -78,7 +78,7 @@
             <io_usage name="TEMP_VDD" label="temperature VDD">
                 <uattr name="Configuration on uninitialization">-1</uattr>
                 <uattr name="Output drive strength">0</uattr>
-                <uattr name="Output value on initialization">0</uattr>
+                <uattr name="Output value on initialization">1</uattr>
                 <uattr name="Pin count">0</uattr>
                 <uattr name="Pin/0000">DIO7</uattr>
                 <uattr name="Pin/0001"></uattr>
@@ -151,7 +151,7 @@
                 <uattr name="Pin/0030"></uattr>
                 <uattr name="Pin/0031"></uattr>
             </io_usage>
-            <io_usage name="VDDHold" label="enable vdd hold">
+            <io_usage name="VDD_HOLD" label="Vdd hold enable">
                 <uattr name="Configuration on uninitialization">-1</uattr>
                 <uattr name="Output drive strength">0</uattr>
                 <uattr name="Output value on initialization">1</uattr>
@@ -290,7 +290,10 @@
         <sccode name="event1" init_power_mode="0"><![CDATA[]]></sccode>
         <sccode name="event2" init_power_mode="0"><![CDATA[]]></sccode>
         <sccode name="event3" init_power_mode="0"><![CDATA[]]></sccode>
-        <sccode name="execute" init_power_mode="0"><![CDATA[//gpioSetOutput(AUXIO_O_VDDHOLD);
+        <sccode name="execute" init_power_mode="0"><![CDATA[gpioSetOutput(AUXIO_O_VDD_HOLD);
+//gpioClearOutput(AUXIO_O_VDD_HOLD);
+
+//we can also enable the LED here to indicate measurements being made maybe? So that all ioid pins are in one place.
 
 if(input.TempEnable == 1){
     fwAcquirePeripheral(PERIPHERAL_ADC);
@@ -343,12 +346,9 @@ if(input.RotationEnable == 1){
     for(U16 n = 0; n < ARRAY_SIZE; n++){
 
         //Enable to the measurement to start synchoronously at first start trigger
-
         tdcArm(TDC_START_SYNC);
-        //wait for TDC to stop triggering for 200ms
-        //tdcWaitUs(200000); //max input value allowed for this function is 250000 = 250ms
-        tdcWaitUs(200000);
-        //fwDelayUs(100000,FW_DELAY_RANGE_100_MS);
+
+        fwDelayUs(20000,FW_DELAY_RANGE_100_MS);
         //fwDelayUs(50000,FW_DELAY_RANGE_100_MS);
         //Check that TDC has finished and not TIme out
         //tdcCheckDoneEv(state.compOut);

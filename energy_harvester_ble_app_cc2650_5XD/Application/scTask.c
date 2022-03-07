@@ -63,7 +63,7 @@
 /*********************************************************************
  * GLOBAL VARIABLES
  */
-uint16_t VDDstatus; // changed from 32 bits to 16, if there is an error, change it back
+uint16_t VDDstatus;
 char VDDarray[4];
 char voltageArray[10];
 int16_t OmegaArray[SCIF_COMP_HANDLE_ARRAY_SIZE]; // changed from 32 bits to 16, if there is an error, change it back
@@ -72,14 +72,14 @@ char OmegaAveArray[4];
 int Grad;
 char GradArray[4];
 char GradArray2[4];
-int16_t frequency; // changed from 32 bits to 16, if there is an error, change it back
+int16_t frequency;
 uint16_t time_high[SCIF_COMP_HANDLE_ARRAY_SIZE]; //Storage for 16 MSBs
 uint16_t time_low[SCIF_COMP_HANDLE_ARRAY_SIZE]; //Storage for 16 LSBs
 uint32_t time_tot; //Merge of time_high and time_low
-uint16_t rtc_Hz; //set SCS task interval   // changed from 32 bits to 16, if there is an error, change it back
+uint16_t rtc_Hz; //set SCS task interval
 //For storing ADC parameters used in the ADC API for converting raw value to voltage
-int16_t ADCGain; // changed from 32 bits to 16, if there is an error, change it back
-int16_t ADCOffset; // changed from 32 bits to 16, if there is an error, change it back
+int16_t ADCGain;
+int16_t ADCOffset;
 int n = 0; //used in the for loop //does this even need to be a global variable!?
 int incInterval = 0; // used for increasing the transmission interval
 extern int transInterval; // variable to control transmission rate
@@ -101,6 +101,9 @@ static void SC_rangerClockSwiFxn(UArg a0);
 // TASK
 static void SC_processAdc(void);
 //static void SC_processRanger(void);
+
+static void ble_transmit(char array[], uint16_t ADC_SERVICE_NUM);
+
 /* Pin driver handles */
 static PIN_Handle ledPINHandle;
 
@@ -200,7 +203,7 @@ static void SC_processAdc(void) {
 
 	if (incInterval == transInterval) {
 		//PIN_setOutputValue(ledPINHandle, IOID_3, 1);
-		scifTaskData.compHandle.input.TempEnable = 0	;
+		scifTaskData.compHandle.input.TempEnable = 1;
 		scifTaskData.compHandle.input.RotationEnable = 1;
 
 		// enable battery monitor enable
@@ -289,7 +292,8 @@ static void SC_processAdc(void) {
 
 //		OmegaAve = (OmegaArray[0] + OmegaArray[1] + OmegaArray[2]
 //				+ OmegaArray[3] + OmegaArray[4]) / 5;
-		OmegaAve = (OmegaArray[0] + OmegaArray[1] + OmegaArray[2])/ 3;
+		//OmegaAve = (OmegaArray[0] + OmegaArray[1] + OmegaArray[2])/ 3;
+		OmegaAve = (OmegaArray[0] + OmegaArray[1])/2;
 
 		if (OmegaAve >= 500 && VDDstatus > 3200) {
 			PIN_setOutputValue(ledPINHandle, IOID_12, 1);
@@ -318,12 +322,14 @@ static void SC_processAdc(void) {
 		ADC_SERVICE_SERV_UUID,
 		ADC_SERVICE_FREQ, (uint8_t *) OmegaAveArray, strlen(OmegaAveArray));
 
-		//Grad = (-4 * OmegaArray[0] - 2 * OmegaArray[1] + 2 * OmegaArray[3] + 4 * OmegaArray[4]) / 2; //This formula is for 5 measurements with time interval being 100ms
+		Grad = (-4 * OmegaArray[0] - 2 * OmegaArray[1] + 2 * OmegaArray[3] + 4 * OmegaArray[4]) / 2; //This formula is for 5 measurements with time interval being 100ms
 		//we divide gradient by 2 because from the formula in the notes, we have to divide by 20*delta time and delta time is a parameter we
 		// can choose and we chose it to be 0.1 = 100 ms.
 
-		Grad = (5*OmegaArray[2]-5*OmegaArray[0]); //formula for 3 measurements with 100ms wait time
+		//Grad = (5*OmegaArray[2]-5*OmegaArray[0]); //formula for 3 measurements with 100ms wait time
 		//Grad = (5*OmegaArray[2]-5*OmegaArray[0])/2; //formula for 3 measurements with 200ms wait time
+		//Grad = OmegaArray[0];
+		//Grad = 20*OmegaArray[1] - 20*OmegaArray[0]; // formula for 2 measurements with 50ms wait time
 
 		if (Grad >= 0 && Grad < 10) {
 			itoaAppendStr(GradArray2, Grad, "   ");
@@ -376,6 +382,15 @@ static void SC_processAdc(void) {
 	}
 
 }
+
+
+static void ble_transmit(char array[], uint16_t ADC_SERVICE_NUM){
+	user_enqueueCharDataMsg(APP_MSG_UPDATE_CHARVAL, 0,
+	ADC_SERVICE_SERV_UUID,
+	ADC_SERVICE_NUM, (uint8_t *) array, strlen(array));
+}
+
+
 // SC_processAdc
 
 /*
