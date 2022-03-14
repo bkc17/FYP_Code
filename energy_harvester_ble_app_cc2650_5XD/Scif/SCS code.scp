@@ -19,6 +19,7 @@
         <tattr name="ARRAY_SIZE" type="expr" content="const" scope="task" min="0" max="65535">5</tattr>
         <tattr name="input.RotationEnable" desc="Enable the rotation calculation" type="expr" content="struct" scope="task" min="0" max="65535">0</tattr>
         <tattr name="input.TempEnable" desc="Enables the code to read the temperature" type="expr" content="struct" scope="task" min="0" max="65535">0</tattr>
+        <tattr name="input.VDDHoldEnable" desc="Enable VDD_Hold" type="expr" content="struct" scope="task" min="0" max="65535">0</tattr>
         <tattr name="output.ADCout" type="expr" content="struct" scope="task" min="-32768" max="32767">0</tattr>
         <tattr name="output.TimeOutHigh" desc="High bits for timer output" type="expr" content="struct" scope="task" min="0" max="65535">0</tattr>
         <tattr name="output.TimeOutHighArray" size="ARRAY_SIZE" type="expr" content="struct_array" scope="task" min="0" max="65535">0</tattr>
@@ -290,8 +291,11 @@
         <sccode name="event1" init_power_mode="0"><![CDATA[]]></sccode>
         <sccode name="event2" init_power_mode="0"><![CDATA[]]></sccode>
         <sccode name="event3" init_power_mode="0"><![CDATA[]]></sccode>
-        <sccode name="execute" init_power_mode="0"><![CDATA[gpioSetOutput(AUXIO_O_VDD_HOLD);
-//gpioClearOutput(AUXIO_O_VDD_HOLD);
+        <sccode name="execute" init_power_mode="0"><![CDATA[if(input.VDDHoldEnable == 1){
+    gpioSetOutput(AUXIO_O_VDD_HOLD);
+}else{
+    gpioClearOutput(AUXIO_O_VDD_HOLD);
+}
 
 //we can also enable the LED here to indicate measurements being made maybe? So that all ioid pins are in one place.
 

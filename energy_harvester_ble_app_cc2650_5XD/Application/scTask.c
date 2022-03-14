@@ -202,15 +202,24 @@ static void SC_processAdc(void) {
 	}
 
 	if (incInterval == transInterval) {
-		//PIN_setOutputValue(ledPINHandle, IOID_3, 1);
-		scifTaskData.compHandle.input.TempEnable = 1;
-		scifTaskData.compHandle.input.RotationEnable = 1;
+		//Initially we don't make any measurements except VDD.
+		scifTaskData.compHandle.input.TempEnable = 0;
+		scifTaskData.compHandle.input.RotationEnable = 0;
+		scifTaskData.compHandle.input.VDDHoldEnable = 0; //Disable VDD_Hold initially
+		PIN_setOutputValue(ledPINHandle, IOID_12, 0); //Disable overspeed protection initially
+
 
 		// enable battery monitor enable
 		AONBatMonEnable();
 
 		//Get battery voltage (this will return battery voltage in decimal form hence need to convert)
 		VDDstatus = (AONBatMonBatteryVoltageGet() * 125) >> 5;
+
+		if(VDDstatus > 2500){
+			scifTaskData.compHandle.input.TempEnable = 1;
+			scifTaskData.compHandle.input.VDDHoldEnable = 1;
+			scifTaskData.compHandle.input.RotationEnable = 1;
+		}
 
 		if (VDDstatus < 10) {
 			itoaAppendStr(VDDarray, VDDstatus, "   ");
@@ -224,9 +233,7 @@ static void SC_processAdc(void) {
 		else {
 			itoaAppendStr(VDDarray, VDDstatus, "");
 		}
-		user_enqueueCharDataMsg(APP_MSG_UPDATE_CHARVAL, 0,
-		ADC_SERVICE_SERV_UUID,
-		ADC_SERVICE_VDD, (uint8_t *) VDDarray, strlen(VDDarray));
+		ble_transmit(VDDarray, ADC_SERVICE_VDD);
 
 		//temperature in millivolt
 		int TEMP_Vout = scifTaskData.compHandle.output.ADCout * 4300/4096;
@@ -243,21 +250,10 @@ static void SC_processAdc(void) {
 		else {
 			itoaAppendStr(voltageArray, TEMP_Vout, "");
 		}
-		user_enqueueCharDataMsg(APP_MSG_UPDATE_CHARVAL, 0,
-		ADC_SERVICE_SERV_UUID,
-		ADC_SERVICE_TEMP, (uint8_t *) voltageArray, strlen(voltageArray));
+		ble_transmit(voltageArray, ADC_SERVICE_TEMP);
 
 		//obtaining omega
-		//PIN_setOutputValue(ledPINHandle, IOID_11, 1);
-
-		//Task_sleep(25000 / Clock_tickPeriod);
-
-
 		for (n = 0; n < SCIF_COMP_HANDLE_ARRAY_SIZE; n++) {
-			// PIN_setOutputValue(ledPINHandle, IOID_3, 1);
-
-			//waiting
-			//Task_sleep(25000 / Clock_tickPeriod);
 
 			//frequency
 			time_high[n] = scifTaskData.compHandle.output.TimeOutHighArray[n];
@@ -266,12 +262,7 @@ static void SC_processAdc(void) {
 
 			//Convert to frequency
 			frequency = 24000000 / time_tot; //Time_tot is time for half a cycle, see sensor controller code
-			//frequency = 48000000 / frequency;
-			//float frequencyarray[n] = frequency;
-
 			OmegaArray[n] = frequency * 22 / 56;
-			//System_printf ("radian per second is %u. \n",OmegaArray[n]);
-			//System_flush();
 
 			//over speed condition and VDD > Vstor_os_hyst
 			if (OmegaArray[n] >= 500 && VDDstatus > 3200) {
@@ -288,11 +279,10 @@ static void SC_processAdc(void) {
 			}
 		}
 
-		//PIN_setOutputValue(ledPINHandle, IOID_11, 0);
-
-		OmegaAve = (OmegaArray[0] + OmegaArray[1] + OmegaArray[2] + OmegaArray[3] + OmegaArray[4]) / 5;
-		//OmegaAve = (OmegaArray[0] + OmegaArray[1] + OmegaArray[2])/ 3;
-		//OmegaAve = (OmegaArray[0] + OmegaArray[1])/2;
+		for(int i = 0; i < SCIF_COMP_HANDLE_ARRAY_SIZE; i++){
+			OmegaAve += OmegaArray[i];
+		}
+		OmegaAve /= SCIF_COMP_HANDLE_ARRAY_SIZE;
 
 		if (OmegaAve >= 500 && VDDstatus > 3200) {
 			PIN_setOutputValue(ledPINHandle, IOID_12, 1);
@@ -317,9 +307,8 @@ static void SC_processAdc(void) {
 		else if (OmegaAve >= 1000) {
 			itoaAppendStr(OmegaAveArray, OmegaAve, "");
 		}
-		user_enqueueCharDataMsg(APP_MSG_UPDATE_CHARVAL, 0,
-		ADC_SERVICE_SERV_UUID,
-		ADC_SERVICE_FREQ, (uint8_t *) OmegaAveArray, strlen(OmegaAveArray));
+
+		ble_transmit(OmegaAveArray, ADC_SERVICE_FREQ);
 
 		//Grad = (-4 * OmegaArray[0] - 2 * OmegaArray[1] + 2 * OmegaArray[3] + 4 * OmegaArray[4]) / 2; //This formula is for 5 measurements with time interval being 100ms
 		//we divide gradient by 2 because from the formula in the notes, we have to divide by 20*delta time and delta time is a parameter we
@@ -372,10 +361,7 @@ static void SC_processAdc(void) {
 				GradArray2[n + 1] = GradArray[n];
 			}
 		}
-
-		user_enqueueCharDataMsg(APP_MSG_UPDATE_CHARVAL, 0,
-		ADC_SERVICE_SERV_UUID,
-		ADC_SERVICE_GRADIENT, (uint8_t *) GradArray2, strlen(GradArray2));
+		ble_transmit(GradArray2, ADC_SERVICE_GRADIENT);
 
 		incInterval = 0; // reset incInterval because we want it to process data every "transInterval" seconds
 	}
