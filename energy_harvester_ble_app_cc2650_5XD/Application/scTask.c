@@ -363,6 +363,10 @@ static void SC_processAdc(void) {
 		}
 		ble_transmit(GradArray2, ADC_SERVICE_GRADIENT);
 
+		if(VDDstatus <= 2000){
+			scifTaskData.compHandle.input.VDDHoldEnable = 0;
+		}
+
 		incInterval = 0; // reset incInterval because we want it to process data every "transInterval" seconds
 	}
 
