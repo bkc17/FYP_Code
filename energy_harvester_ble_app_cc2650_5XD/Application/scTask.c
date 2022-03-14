@@ -290,10 +290,9 @@ static void SC_processAdc(void) {
 
 		//PIN_setOutputValue(ledPINHandle, IOID_11, 0);
 
-//		OmegaAve = (OmegaArray[0] + OmegaArray[1] + OmegaArray[2]
-//				+ OmegaArray[3] + OmegaArray[4]) / 5;
+		OmegaAve = (OmegaArray[0] + OmegaArray[1] + OmegaArray[2] + OmegaArray[3] + OmegaArray[4]) / 5;
 		//OmegaAve = (OmegaArray[0] + OmegaArray[1] + OmegaArray[2])/ 3;
-		OmegaAve = (OmegaArray[0] + OmegaArray[1])/2;
+		//OmegaAve = (OmegaArray[0] + OmegaArray[1])/2;
 
 		if (OmegaAve >= 500 && VDDstatus > 3200) {
 			PIN_setOutputValue(ledPINHandle, IOID_12, 1);
@@ -322,10 +321,10 @@ static void SC_processAdc(void) {
 		ADC_SERVICE_SERV_UUID,
 		ADC_SERVICE_FREQ, (uint8_t *) OmegaAveArray, strlen(OmegaAveArray));
 
-		Grad = (-4 * OmegaArray[0] - 2 * OmegaArray[1] + 2 * OmegaArray[3] + 4 * OmegaArray[4]) / 2; //This formula is for 5 measurements with time interval being 100ms
+		//Grad = (-4 * OmegaArray[0] - 2 * OmegaArray[1] + 2 * OmegaArray[3] + 4 * OmegaArray[4]) / 2; //This formula is for 5 measurements with time interval being 100ms
 		//we divide gradient by 2 because from the formula in the notes, we have to divide by 20*delta time and delta time is a parameter we
 		// can choose and we chose it to be 0.1 = 100 ms.
-
+		Grad = -10 * OmegaArray[0] - 5 * OmegaArray[1] + 5 * OmegaArray[3] + 10 * OmegaArray[4]; //formula for 5 measurements with 20ms wait time
 		//Grad = (5*OmegaArray[2]-5*OmegaArray[0]); //formula for 3 measurements with 100ms wait time
 		//Grad = (5*OmegaArray[2]-5*OmegaArray[0])/2; //formula for 3 measurements with 200ms wait time
 		//Grad = OmegaArray[0];
