@@ -66,10 +66,10 @@
 uint16_t VDDstatus;
 char VDDarray[4];
 char voltageArray[10];
-int16_t OmegaArray[SCIF_COMP_HANDLE_ARRAY_SIZE]; // changed from 32 bits to 16, if there is an error, change it back
+int16_t OmegaArray[SCIF_COMP_HANDLE_ARRAY_SIZE];
 uint32_t OmegaAve = 0;
 char OmegaAveArray[4];
-int Grad;
+int16_t Grad;
 char GradArray[4];
 char GradArray2[4];
 int16_t frequency;
@@ -80,8 +80,7 @@ uint16_t rtc_Hz; //set SCS task interval
 //For storing ADC parameters used in the ADC API for converting raw value to voltage
 int16_t ADCGain;
 int16_t ADCOffset;
-int n = 0; //used in the for loop //does this even need to be a global variable!?
-int incInterval = 0; // used for increasing the transmission interval
+int16_t incInterval = 0; // used for increasing the transmission interval
 extern int transInterval; // variable to control transmission rate
 
 // Ranger task Clock struct and last tick value
@@ -236,7 +235,7 @@ static void SC_processAdc(void) {
 		ble_transmit(VDDarray, ADC_SERVICE_VDD);
 
 		//temperature in millivolt
-		int TEMP_Vout = scifTaskData.compHandle.output.ADCout * 4300/4096;
+		int16_t TEMP_Vout = scifTaskData.compHandle.output.ADCout * 4300/4096;
 
 		if (TEMP_Vout < 10) {
 			itoaAppendStr(voltageArray, TEMP_Vout, "   ");
@@ -253,7 +252,7 @@ static void SC_processAdc(void) {
 		ble_transmit(voltageArray, ADC_SERVICE_TEMP);
 
 		//obtaining omega
-		for (n = 0; n < SCIF_COMP_HANDLE_ARRAY_SIZE; n++) {
+		for (uint8_t n = 0; n < SCIF_COMP_HANDLE_ARRAY_SIZE; n++) {
 
 			//frequency
 			time_high[n] = scifTaskData.compHandle.output.TimeOutHighArray[n];
