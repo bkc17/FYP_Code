@@ -65,7 +65,7 @@
  */
 uint16_t VDDstatus;
 char VDDarray[4];
-char voltageArray[10];
+char tempArray[10];
 int16_t OmegaArray[SCIF_COMP_HANDLE_ARRAY_SIZE];
 uint32_t OmegaAve = 0;
 char OmegaAveArray[4];
@@ -101,6 +101,7 @@ static void SC_rangerClockSwiFxn(UArg a0);
 static void SC_processAdc(void);
 //static void SC_processRanger(void);
 
+static void create_array_transmit(uint16_t data, char array[], uint16_t ADC_SERVICE_NUM);
 static void ble_transmit(char array[], uint16_t ADC_SERVICE_NUM);
 
 /* Pin driver handles */
@@ -220,36 +221,11 @@ static void SC_processAdc(void) {
 			scifTaskData.compHandle.input.RotationEnable = 1;
 		}
 
-		if (VDDstatus < 10) {
-			itoaAppendStr(VDDarray, VDDstatus, "   ");
-		}
-		else if (VDDstatus < 100 && VDDstatus >= 10) {
-			itoaAppendStr(VDDarray, VDDstatus, "  ");
-		}
-		else if (VDDstatus < 1000 && VDDstatus >= 100) {
-			itoaAppendStr(VDDarray, VDDstatus, " ");
-		}
-		else {
-			itoaAppendStr(VDDarray, VDDstatus, "");
-		}
-		ble_transmit(VDDarray, ADC_SERVICE_VDD);
+		create_array_transmit(VDDstatus, VDDarray, ADC_SERVICE_VDD);
 
 		//temperature in millivolt
-		int16_t TEMP_Vout = scifTaskData.compHandle.output.ADCout * 4300/4096;
-
-		if (TEMP_Vout < 10) {
-			itoaAppendStr(voltageArray, TEMP_Vout, "   ");
-		}
-		else if (TEMP_Vout < 100 && TEMP_Vout >= 10) {
-			itoaAppendStr(voltageArray, TEMP_Vout, "  ");
-		}
-		else if (TEMP_Vout < 1000 && TEMP_Vout >= 100) {
-			itoaAppendStr(voltageArray, TEMP_Vout, " ");
-		}
-		else {
-			itoaAppendStr(voltageArray, TEMP_Vout, "");
-		}
-		ble_transmit(voltageArray, ADC_SERVICE_TEMP);
+		uint16_t TEMP_Vout = scifTaskData.compHandle.output.ADCout * 4300/4096;
+		create_array_transmit(TEMP_Vout, tempArray, ADC_SERVICE_TEMP);
 
 		//obtaining omega
 		for (uint8_t n = 0; n < SCIF_COMP_HANDLE_ARRAY_SIZE; n++) {
@@ -371,6 +347,23 @@ static void SC_processAdc(void) {
 
 }
 
+static void create_array_transmit(uint16_t data, char array[], uint16_t ADC_SERVICE_NUM){
+
+	if (data < 10) {
+		itoaAppendStr(array, data, "   ");
+	}
+	else if (data < 100 && data >= 10) {
+		itoaAppendStr(array, data, "  ");
+	}
+	else if (data < 1000 && data >= 100) {
+		itoaAppendStr(array, data, " ");
+	}
+	else {
+		itoaAppendStr(array, data, "");
+	}
+	ble_transmit(array, ADC_SERVICE_NUM);
+
+}
 
 static void ble_transmit(char array[], uint16_t ADC_SERVICE_NUM){
 	user_enqueueCharDataMsg(APP_MSG_UPDATE_CHARVAL, 0,
