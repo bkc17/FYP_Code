@@ -412,7 +412,6 @@ void SC_init(void) {
 	ledPINHandle = PIN_open(&ledPINState, ledPINTable);
 	if (!ledPINHandle) {
 		Log_error0("Error initialising board LED pins");
-
 	}
 	// Insert default params
 	Clock_Params clockParams;
