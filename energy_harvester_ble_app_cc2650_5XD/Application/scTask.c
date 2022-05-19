@@ -406,9 +406,6 @@ static void SC_processRanger(void) {
  */
 void SC_init(void) {
 
-//    System_printf ("test \n");
-//    System_flush();
-
 	ledPINHandle = PIN_open(&ledPINState, ledPINTable);
 	if (!ledPINHandle) {
 		Log_error0("Error initialising board LED pins");
