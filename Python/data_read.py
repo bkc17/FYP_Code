@@ -7,6 +7,7 @@ import random
 import datetime as dt
 import pygatt
 import time
+import matplotlib.gridspec as gridspec
 
 
 file_path = "C:\\Users\\bhara\\workspace_v8\\LabView\\Data\\test.txt"
@@ -27,7 +28,7 @@ def follow(thefile):
             continue
         yield line
 
-def plot_update_file(i, xs, ys):
+def plot_update_file(i, xs, y_rot_speed, y_grad):
     # logfile = open(file_path,"r")
     # line = logfile.readlines()[-1]
     # logfile.close()
@@ -37,16 +38,26 @@ def plot_update_file(i, xs, ys):
             pass
         last_line = line
     vdd, temp, rot_speed, grad = last_line.split("\t")[:-1]
-    ys.append(temp)
+    rand = random.randint(0,5)
+    y_rot_speed.append(rot_speed)
+    y_grad.append(grad)
+
     xs.append(dt.datetime.now().strftime('%H:%M:%S.%f')[:-5])
-    xs = xs[-20:]
-    ys = ys[-20:]
-    ax.clear()
-    ax.plot(xs, ys)
-    plt.xticks(rotation=45, ha='right')
-    plt.subplots_adjust(bottom=0.30)
-    plt.ylabel('Rotation Speed (rads/sec)')
+    xs = xs[-10:]
+    y_rot_speed = y_rot_speed[-10:]
+    y_grad = y_grad[-10:]
     
+    ax.clear()
+    ax.plot(xs, y_rot_speed)
+    ax.tick_params(labelrotation=45)
+    ax.set_title('Rotation Speed (rads/sec)')
+
+    ax2.clear()
+    ax2.plot(xs, y_grad)
+    ax2.tick_params(labelrotation=45)
+    ax2.set_title('Gradient (rads/$s^2$)')
+
+    fig.tight_layout()
 
 def main():
     # logfile = open(file_path,"r")
@@ -54,16 +65,19 @@ def main():
     
     # for line in loglines:
 
-    #     vdd, temp, rot_speed, grad = line.split("\t")[:-1]  
+    #     vdd, temp, rot_speed, grad = line.split("\t")[:-1]
+    xs = []
+    y_rot_speed = []
+    y_grad = []
 
-    ani = animation.FuncAnimation(fig, plot_update_file, fargs=(xs, ys), interval=1000)
+    ani = animation.FuncAnimation(fig, plot_update_file, fargs=(xs, y_rot_speed, y_grad), interval=1000)
+    
     plt.show()
     
         
 if __name__ == '__main__':
-    fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1)
-    xs = []
-    ys = []
-    
+    fig = plt.figure(figsize=(10,4))
+    ax = fig.add_subplot(1, 2, 1)
+    ax2 = fig.add_subplot(1, 2, 2)
+
     main()
