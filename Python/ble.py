@@ -17,13 +17,12 @@ def ble_read_data(device):
 
     return vdd, temp, rot_speed, grad
 
-def save_data_to_excel():
+def save_data_to_excel(save_data_path, y_vdd, y_temp, y_rot_speed, y_grad):
     print("Saving data to: ", save_data_path)
     pass
 
 def plot_update(i, xs, device):
     vdd, temp, rot_speed, grad = ble_read_data(device)
-
     y_vdd.append(vdd)
     y_temp.append(temp)
     y_rot_speed.append(rot_speed)
@@ -44,8 +43,6 @@ def plot_update(i, xs, device):
     ax_grad.tick_params(labelrotation=45)
     ax_grad.set_title('Gradient (rads/ $s^2$)')
 
-    
-
 def handler(sig_receieved, frame):
     adapter.stop()
     save_data_to_excel(save_data_path, y_vdd, y_temp, y_rot_speed, y_grad)
@@ -62,7 +59,7 @@ def main():
     print("Connected to device {}".format(device))
 
     xs = []
-    ani = animation.FuncAnimation(fig, plot_update, fargs=(xs, device), interval = 1000)
+    ani = animation.FuncAnimation(fig, plot_update, fargs=(xs, device), interval = 200)
     plt.show()
 
 if __name__ == "__main__":
@@ -71,10 +68,10 @@ if __name__ == "__main__":
     save_data_path = ""
     serial_port = "COM3"
 
-    y_rot_speed = []
-    y_grad = []
-    y_temp = []
-    y_vdd = []
+    y_rot_speed = [0]
+    y_grad = [0]
+    y_temp = [0]
+    y_vdd = [0]
 
     fig = plt.figure(figsize=(10,5))
     ax_rot = fig.add_subplot(1, 2, 1)
