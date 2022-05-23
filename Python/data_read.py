@@ -39,12 +39,13 @@ def plot_update_file(i, xs, y_rot_speed, y_grad):
     # line = logfile.readlines()[-1]
     # logfile.close()
     
-    with open(file_path) as f:
-        for line in f:
-            pass
-        last_line = line
-    vdd, temp, rot_speed, grad = last_line.split("\t")[:-1]
-    rand = random.randint(0,5)
+    # with open(file_path) as f:
+    #     for line in f:
+    #         pass
+    #     last_line = line
+    # vdd, temp, rot_speed, grad = last_line.split("\t")[:-1]
+
+    rot_speed, grad = get_data()
     y_rot_speed.append(rot_speed)
     y_grad.append(grad)
 

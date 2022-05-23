@@ -54,8 +54,6 @@ def handler(sig_receieved, frame):
 
 
 def main():
-
-
     try:
         device = adapter.connect('B0:91:22:0C:61:84')
     except:
@@ -63,7 +61,8 @@ def main():
     
     print("Connected to device {}".format(device))
 
-    ani = animation.FuncAnimation(fig, plot_update, fargs=(xs, y_rot_speed, y_grad, y_temp, y_vdd, device), interval=1000)
+    xs = []
+    ani = animation.FuncAnimation(fig, plot_update, fargs=(xs, device), interval = 1000)
     plt.show()
 
 if __name__ == "__main__":
@@ -72,13 +71,12 @@ if __name__ == "__main__":
     save_data_path = ""
     serial_port = "COM3"
 
-    xs = []
     y_rot_speed = []
     y_grad = []
     y_temp = []
     y_vdd = []
 
-    fig = plt.figure(figsize=(10,4))
+    fig = plt.figure(figsize=(10,5))
     ax_rot = fig.add_subplot(1, 2, 1)
     ax_grad = fig.add_subplot(1, 2, 2)
 
