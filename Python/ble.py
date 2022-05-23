@@ -4,18 +4,30 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import datetime as dt
+import threading
 from signal import signal, SIGINT
 from sys import exit
 
-def plot_update(i, xs, y_rot_speed, y_grad, y_temp, y_vdd, device):
 
+def ble_read_data(device):
     vdd = float(device.char_read("F000BEF204514000B000000000000000").decode())/1000
     temp = round((1035 - float(device.char_read("F000BEF104514000B000000000000000").decode()))/5.5,2)
     rot_speed = int(device.char_read("F000BEEF04514000B000000000000000"))
     grad = int(device.char_read("F000BEF004514000B000000000000000"))
+
+    return vdd, temp, rot_speed, grad
+
+def save_data_to_excel():
+    print("Saving data to: ", save_data_path)
+    pass
+
+def plot_update(i, xs, device):
+    vdd, temp, rot_speed, grad = ble_read_data(device)
+
+    y_vdd.append(vdd)
+    y_temp.append(temp)
     y_rot_speed.append(rot_speed)
     y_grad.append(grad)
-    y_vdd
     xs.append(dt.datetime.now().strftime('%H:%M:%S.%f')[:-5])
 
     xs = xs[-10:]
@@ -32,19 +44,17 @@ def plot_update(i, xs, y_rot_speed, y_grad, y_temp, y_vdd, device):
     ax_grad.tick_params(labelrotation=45)
     ax_grad.set_title('Gradient (rads/ $s^2$)')
 
+    
+
 def handler(sig_receieved, frame):
     adapter.stop()
+    save_data_to_excel(save_data_path, y_vdd, y_temp, y_rot_speed, y_grad)
     print('Goodbye!')
     exit(0)
 
 
 def main():
 
-    xs = []
-    y_rot_speed = []
-    y_grad = []
-    y_temp = []
-    y_vdd = []
 
     try:
         device = adapter.connect('B0:91:22:0C:61:84')
@@ -55,18 +65,23 @@ def main():
 
     ani = animation.FuncAnimation(fig, plot_update, fargs=(xs, y_rot_speed, y_grad, y_temp, y_vdd, device), interval=1000)
     plt.show()
-    # finally:
-    #     adapter.stop()
-
 
 if __name__ == "__main__":
     signal(SIGINT, handler)
+
+    save_data_path = ""
+    serial_port = "COM3"
+
+    xs = []
+    y_rot_speed = []
+    y_grad = []
+    y_temp = []
+    y_vdd = []
 
     fig = plt.figure(figsize=(10,4))
     ax_rot = fig.add_subplot(1, 2, 1)
     ax_grad = fig.add_subplot(1, 2, 2)
 
-    serial_port = "COM3"
     try:
         adapter = pygatt.BGAPIBackend(serial_port = serial_port)
         adapter.start()

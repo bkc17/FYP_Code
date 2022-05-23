@@ -5,12 +5,18 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import random
 import datetime as dt
+import threading
 import pygatt
 import time
-import matplotlib.gridspec as gridspec
 
 
 file_path = "C:\\Users\\bhara\\workspace_v8\\LabView\\Data\\test.txt"
+
+def get_data():
+    x = random.randint(0,10)
+    y = random.randint(0, 5)
+
+    return x,y
 
 def follow(thefile):
     '''generator function that yields new lines in a file
