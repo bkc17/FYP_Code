@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import random
 import datetime as dt
-import threading
+import multiprocessing
 import pygatt
 import time
 

@@ -1,6 +1,6 @@
 #define __unsigned_chars__ 1	/* Predefined */
-#define __DATE__ "May 19 2022"	/* Predefined */
-#define __TIME__ "11:25:04"	/* Predefined */
+#define __DATE__ "May 24 2022"	/* Predefined */
+#define __TIME__ "13:22:28"	/* Predefined */
 #define __STDC__ 1	/* Predefined */
 #define __STDC_VERSION__ 199901L	/* Predefined */
 #define __STDC_NO_ATOMICS__ 1	/* Predefined */

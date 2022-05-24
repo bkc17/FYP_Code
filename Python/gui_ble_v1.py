@@ -1,6 +1,5 @@
 from multiprocessing import connection
 import tkinter as tk
-from psutil import cpu_percent
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from datetime import datetime, timedelta
