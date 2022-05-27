@@ -13,7 +13,8 @@ np.random.seed(19680801)
 class ProcessPlotter:
     def __init__(self):
         self.x = []
-        self.y = []
+        self.y_rot = []
+        self.y_grad = []
 
     def terminate(self):
         plt.close('all')
@@ -26,8 +27,17 @@ class ProcessPlotter:
                 return False
             else:
                 self.x.append(datetime.now())
-                self.y.append(command)
-                self.ax.plot(self.x, self.y, color = "blue")
+                self.y_rot.append(command[2])
+                self.y_grad.append(command[3])
+                x = self.x[-10:]
+                # self.ax1.set_xlim(x[0], x[-1])
+                # self.ax2.set_xlim(x[0], x[-1])
+                y_rot = self.y_rot[-10:]
+                y_grad = self.y_grad[-10:]
+                self.ax1.plot(x, y_rot, color = "blue")
+
+                self.ax2.plot(x, y_grad, color = "blue")
+
         self.fig.canvas.draw()
         return True
 
@@ -35,8 +45,14 @@ class ProcessPlotter:
         print('starting plotter...')
 
         self.pipe = pipe
-        self.fig, self.ax = plt.subplots()
-        timer = self.fig.canvas.new_timer(interval=1000)
+        self.fig, (self.ax1, self.ax2) = plt.subplots(1,2,figsize=(14,7))
+        self.ax1.grid()
+        self.ax1.set_ylim(100, 200)
+        self.ax1.tick_params(labelrotation=45)
+        self.ax2.grid()
+        self.ax2.tick_params(labelrotation=45)
+        self.ax2.set_ylim(-20, 20)
+        timer = self.fig.canvas.new_timer(interval=200)
         timer.add_callback(self.call_back)
         timer.start()
 
@@ -63,10 +79,12 @@ class NBPlot:
         if finished:
             send(None)
         else:
-            # data = np.random.random(2)
-            rot = int(self.device.char_read("F000BEEF04514000B000000000000000").decode())
-            print(rot)
-            send(rot)
+            temp = round((1035 - float(self.device.char_read("F000BEF104514000B000000000000000").decode()))/5.5,2)
+            rot_speed = int(self.device.char_read("F000BEEF04514000B000000000000000"))
+            grad = int(self.device.char_read("F000BEF004514000B000000000000000"))
+            vdd = float(self.device.char_read("F000BEF204514000B000000000000000").decode())/1000
+            data = np.array([vdd, temp, rot_speed, grad])
+            send(data)
 
 
 def main():
