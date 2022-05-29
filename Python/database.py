@@ -1,5 +1,5 @@
 import firebase_admin
-from firebase_admin import db
+from firebase_admin import db, storage
 
 firebaseConfig = {
   "apiKey": "AIzaSyAFXhfS_8Hqe6yf8fih8ggvKXHL7FCg91A",
@@ -14,24 +14,43 @@ firebaseConfig = {
 
 cred_obj = firebase_admin.credentials.Certificate('ServiceAccountKey.json')
 default_app = firebase_admin.initialize_app(cred_obj, {
-	'databaseURL':"https://fyp-anemometer-default-rtdb.firebaseio.com"
+	"databaseURL":"https://fyp-anemometer-default-rtdb.firebaseio.com",
+  "storageBucket": "fyp-anemometer.appspot.com"
 	})
 
 #Initial setting of data
 data = {
-  "vdd": [0,0,0,0,0,0,0,0,0,0],
-  "temp": [0,0,0,0,0,0,0,0,0,0],
-  "rot_speed": [0,0,0,0,0,0,0,0,0,0],
-  "grad": [0,0,0,0,0,0,0,0,0,0]
+  "data_full":
+  {
+    "vdd": [0,0,0,0,0,0,0,0,0,0],
+    "temp": [0,0,0,0,0,0,0,0,0,0],
+    "rot_speed": [0,0,0,0,0,0,0,0,0,0],
+    "grad": [0,0,0,0,0,0,0,0,0,0]
+  },
+  "data_current":
+  {
+    "vdd": 0,
+    "temp": 0,
+    "rot_speed": 0,
+    "grad": 0
+  }
 }
 
 ref = db.reference("/")
-ref.set(data)
+store = storage.bucket()
 
-#updating data
-data["vdd"] = [1,0,0,0,0,0,0,0,0,0]
-data["temp"] = [2,0,0,0,0,0,0,0,0,0]
-data["rot_speed"] = [3,0,0,0,0,0,0,0,0,0]
-data["grad"] = [4,0,0,0,0,0,0,0,0,0]
+store = store.blob("final_results.csv")
+store.upload_from_filename("final_results.csv")
+# ref.set(data)
 
-ref.update(data)
+# #updating data
+# data["data_full"]["vdd"] = [1,0,0,0,0,0,0,0,0,0]
+# data["data_full"]["temp"] = [2,0,0,0,0,0,0,0,0,0]
+# data["data_full"]["rot_speed"] = [3,0,0,0,0,0,0,0,0,0]
+# data["data_full"]["grad"] = [4,0,0,0,0,0,0,0,0,0]
+# data["data_current"]["vdd"] = 10
+# data["data_current"]["temp"] = 9
+# data["data_current"]["rot_speed"] = 8
+# data["data_current"]["grad"] = 7
+
+# ref.update(data)

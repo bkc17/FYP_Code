@@ -35,7 +35,8 @@ class ProcessPlotter:
                 y_rot = self.y_rot[-10:]
                 y_grad = self.y_grad[-10:]
                 self.ax1.plot(x, y_rot, color = "blue")
-
+                self.ax1.set_title("Rotation Speed (rads/sec)")
+                self.ax2.set_title("Gradient (rads/ $s^2$)")
                 self.ax2.plot(x, y_grad, color = "blue")
 
         self.fig.canvas.draw()
