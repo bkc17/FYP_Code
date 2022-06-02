@@ -44,13 +44,13 @@ store.upload_from_filename("final_results.csv")
 # ref.set(data)
 
 # #updating data
-# data["data_full"]["vdd"] = [1,0,0,0,0,0,0,0,0,0]
-# data["data_full"]["temp"] = [2,0,0,0,0,0,0,0,0,0]
-# data["data_full"]["rot_speed"] = [3,0,0,0,0,0,0,0,0,0]
-# data["data_full"]["grad"] = [4,0,0,0,0,0,0,0,0,0]
-# data["data_current"]["vdd"] = 10
-# data["data_current"]["temp"] = 9
-# data["data_current"]["rot_speed"] = 8
-# data["data_current"]["grad"] = 7
+data["data_full"]["vdd"] = [1,0,0,0,0,0,0,0,0,0]
+data["data_full"]["temp"] = [2,0,0,0,0,0,0,0,0,0]
+data["data_full"]["rot_speed"] = [3,0,0,0,0,0,0,0,0,0]
+data["data_full"]["grad"] = [4,0,0,0,0,0,0,0,0,0]
+data["data_current"]["vdd"] = 1000
+data["data_current"]["temp"] = 900
+data["data_current"]["rot_speed"] = 800
+data["data_current"]["grad"] = 700
 
-# ref.update(data)
+ref.update(data)

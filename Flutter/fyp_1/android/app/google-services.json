@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1093257041401",
+    "firebase_url": "https://fyp-anemometer-default-rtdb.firebaseio.com",
+    "project_id": "fyp-anemometer",
+    "storage_bucket": "fyp-anemometer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1093257041401:android:d876fe19413f87474a9928",
+        "android_client_info": {
+          "package_name": "com.bkc17.fyp_1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1093257041401-iokgl2i9t2qu9q70vp7s9v8bdjrh3emk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVE4j_sx36bm7YgzbTxThoP-2cP8AqgJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1093257041401-iokgl2i9t2qu9q70vp7s9v8bdjrh3emk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1093257041401-s0ve2m3amet4uaej1riigeb28pmecapa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bkc17.fyp1"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
