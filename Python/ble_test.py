@@ -35,14 +35,21 @@ def handler(sig_receieved, frame):
 def main():
     try:
         device = adapter.connect('B0:91:22:0C:61:84')
+        disconnected = False
     except:
         raise Exception("Could not connect to device...\n")
     
     print("Connected to device {}".format(device))
 
     while(True):
+        if(disconnected):
+            adapter.start()
+            device = adapter.connect('B0:91:22:0C:61:84')
+
         plot_update(device)
-        time.sleep(1)
+        adapter.stop()
+        disconnected = True
+        time.sleep(5)
 
 
 if __name__ == "__main__":

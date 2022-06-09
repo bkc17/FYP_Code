@@ -52,9 +52,9 @@ data["data_full"]["rot_speed"] = [3,0,0,0,0,0,0,0,0,0]
 data["data_full"]["grad"] = [4,0,0,0,0,0,0,0,0,0]
 while(True):
 
-  data["data_current"]["vdd"] = random.randint(0,5)
-  data["data_current"]["temp"] = random.randint(0,5)
-  data["data_current"]["rot_speed"] = random.randint(0,5)
-  data["data_current"]["grad"] = random.randint(0,5)
+  data["data_current"]["vdd"] = round(random.uniform(3.3,3.6),2)
+  data["data_current"]["temp"] = round(random.uniform(20,22),2)
+  data["data_current"]["rot_speed"] = random.randint(137,140)
+  data["data_current"]["grad"] = random.choice([0,5,10, 15])
   ref.update(data)
   time.sleep(1)

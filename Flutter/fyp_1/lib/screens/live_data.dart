@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_1/constants.dart';
-import 'package:fyp_1/components/reusable_card.dart';
+import 'package:fyp_1/components/reusable_card_widget.dart';
+import 'live_plot.dart';
 
 class ReadData extends StatefulWidget {
   const ReadData({Key? key}) : super(key: key);
@@ -18,6 +19,8 @@ class _ReadDataState extends State<ReadData> {
   String temp = '0';
   String rot_speed = '0';
   String grad = '0';
+  String wind_speed = '0';
+
   @override
   void initState() {
     super.initState();
@@ -33,6 +36,7 @@ class _ReadDataState extends State<ReadData> {
         temp = decoded_data['temp'].toString();
         rot_speed = decoded_data['rot_speed'].toString();
         grad = decoded_data['grad'].toString();
+        wind_speed = decoded_data['wind_speed'].toString();
       });
     });
   }
@@ -45,222 +49,54 @@ class _ReadDataState extends State<ReadData> {
         title: const Text('Live Data'),
         centerTitle: true,
       ),
-      // body: Center(
-      //   child: Padding(
-      //     padding: const EdgeInsets.all(20.0),
-      //     child: Column(
-      //       // crossAxisAlignment: CrossAxisAlignment.stretch,
-      //       mainAxisAlignment: MainAxisAlignment.center,
-      //       children: [
-      //         Row(
-      //           children: [
-      //             Expanded(
-      //               child: ReusableCard(
-      //                 colour: kActiveCardColour,
-      //                 cardChild: Column(
-      //                   mainAxisAlignment: MainAxisAlignment.center,
-      //                   children: <Widget>[
-      //                     const Text(
-      //                       'VDD',
-      //                       style: kLabelTextStyle,
-      //                     ),
-      //                     Text(
-      //                       '${decoded_data["vdd"]}',
-      //                       style: kNumberTextStyle,
-      //                     ),
-      //                   ],
-      //                 ),
-      //               ),
-      //             ),
-      //             Expanded(
-      //               child: ReusableCard(
-      //                 colour: kActiveCardColour,
-      //                 cardChild: Column(
-      //                   mainAxisAlignment: MainAxisAlignment.center,
-      //                   children: <Widget>[
-      //                     const Text(
-      //                       'Temperature',
-      //                       style: kLabelTextStyle,
-      //                     ),
-      //                     Text(
-      //                       '${decoded_data["temp"]}',
-      //                       style: kNumberTextStyle,
-      //                     ),
-      //                   ],
-      //                 ),
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //         const SizedBox(
-      //           height: 30,
-      //         ),
-      //         Row(
-      //           children: [
-      //             Expanded(
-      //               child: ReusableCard(
-      //                 colour: kActiveCardColour,
-      //                 cardChild: Column(
-      //                   mainAxisAlignment: MainAxisAlignment.center,
-      //                   children: <Widget>[
-      //                     const Text(
-      //                       'Rotation Speed',
-      //                       style: kLabelTextStyle,
-      //                     ),
-      //                     Text(
-      //                       '${decoded_data["rot_speed"]}',
-      //                       style: kNumberTextStyle,
-      //                     ),
-      //                   ],
-      //                 ),
-      //               ),
-      //             ),
-      //             Expanded(
-      //               child: ReusableCard(
-      //                 colour: kActiveCardColour,
-      //                 cardChild: Column(
-      //                   mainAxisAlignment: MainAxisAlignment.center,
-      //                   children: <Widget>[
-      //                     const Text(
-      //                       'Gradient',
-      //                       style: kLabelTextStyle,
-      //                     ),
-      //                     Text(
-      //                       '${decoded_data["grad"]}',
-      //                       style: kNumberTextStyle,
-      //                     ),
-      //                   ],
-      //                 ),
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ReusableCard(
-              colour: kActiveCardColour,
-              cardChild: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text(
-                    'VDD (Volts)',
-                    style: kLabelTextStyle,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Text(
-                        vdd,
-                        style: kNumberTextStyle,
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                    ],
-                  ),
-                ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ReusableCardWidget(
+                title: 'VDD (Volts)',
+                data: vdd,
+                function: const LivePlot(
+                  data: 'vdd',
+                  title: 'VDD (Volts)',
+                ),
               ),
-            ),
-            ReusableCard(
-              colour: kActiveCardColour,
-              cardChild: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text(
-                    'Temperature (\u00B0C)',
-                    style: kLabelTextStyle,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Text(
-                        temp,
-                        style: kNumberTextStyle,
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                    ],
-                  ),
-                ],
+              ReusableCardWidget(
+                title: 'Temperature (\u00B0C)',
+                data: temp,
+                function: const LivePlot(
+                  data: 'temp',
+                  title: 'Temperature (\u00B0C)',
+                ),
               ),
-            ),
-            ReusableCard(
-              colour: kActiveCardColour,
-              cardChild: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text(
-                    'Speed (rads/sec)',
-                    style: kLabelTextStyle,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Text(
-                        rot_speed,
-                        style: kNumberTextStyle,
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                    ],
-                  ),
-                ],
+              ReusableCardWidget(
+                title: 'Speed (rads/sec)',
+                data: rot_speed,
+                function: const LivePlot(
+                  data: 'rot_speed',
+                  title: 'Speed (rads/sec)',
+                ),
               ),
-            ),
-            ReusableCard(
-              colour: kActiveCardColour,
-              cardChild: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text(
-                    'Gradient (rads/s\u00B2)',
-                    style: kLabelTextStyle,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Text(
-                        grad,
-                        style: kNumberTextStyle,
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                    ],
-                  ),
-                ],
+              ReusableCardWidget(
+                title: 'Gradient (rads/s\u00B2)',
+                data: grad,
+                function: const LivePlot(
+                  data: 'grad',
+                  title: 'Gradient (rads/s\u00B2)',
+                ),
               ),
-            ),
-          ],
+              ReusableCardWidget(
+                title: 'Wind Speed (m/s)',
+                data: wind_speed,
+                function: const LivePlot(
+                  data: 'wind_speed',
+                  title: 'Wind Speed (m/s)',
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

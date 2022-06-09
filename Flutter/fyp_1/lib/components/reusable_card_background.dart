@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import '../screens/live_plot.dart';
 
-class ReusableCard extends StatelessWidget {
-  ReusableCard({
+class ReusableCardBackground extends StatelessWidget {
+  ReusableCardBackground({
     required this.colour,
     required this.cardChild,
+    required this.function,
   });
 
   final Color colour;
   final Widget cardChild;
+  final LivePlot function;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +25,14 @@ class ReusableCard extends StatelessWidget {
         ),
         child: cardChild,
       ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => function,
+          ),
+        );
+      },
     );
   }
 }

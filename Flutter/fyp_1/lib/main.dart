@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
   final Future<FirebaseApp> _fbapp = Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -85,36 +86,9 @@ class MyHomePage extends StatelessWidget {
                   );
                 },
                 child: const Text(
-                  'Live Data',
+                  'View Data',
                   style: TextStyle(
-                    fontSize: 25,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(150, 55),
-                  primary: const Color(0xFF03DAC6),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LivePlot(),
-                    ),
-                  );
-                },
-                child: const Text(
-                  'Live Plot',
-                  style: TextStyle(
-                    fontSize: 25,
+                    fontSize: 23,
                     color: Colors.black,
                   ),
                 ),

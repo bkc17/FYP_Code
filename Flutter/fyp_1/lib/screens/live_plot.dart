@@ -6,6 +6,11 @@ import '../constants.dart';
 import '../components/chart_widget.dart';
 
 class LivePlot extends StatefulWidget {
+  final String data;
+  final String title;
+
+  const LivePlot({required this.data, required this.title});
+
   @override
   State<LivePlot> createState() => _LivePlotState();
 }
@@ -13,17 +18,14 @@ class LivePlot extends StatefulWidget {
 class _LivePlotState extends State<LivePlot> {
   final _database = FirebaseDatabase.instance.ref('/data_current');
   var decoded_data;
-  int rot_speed = 0;
-  int grad = 0;
+  int data_val = 0;
   int counter = 0;
-  List<TurbineData> _chartDataSpeed = <TurbineData>[];
-  List<TurbineData> _chartDataGrad = <TurbineData>[];
+  List<TurbineData> _chartData = <TurbineData>[];
 
   @override
   void initState() {
     super.initState();
-    _chartDataSpeed = getChartData();
-    _chartDataGrad = getChartData();
+    _chartData = getChartData();
     _activateListeners();
   }
 
@@ -32,13 +34,8 @@ class _LivePlotState extends State<LivePlot> {
     stream.listen((DatabaseEvent event) {
       decoded_data = jsonDecode(jsonEncode(event.snapshot.value));
       setState(() {
-        // print(decoded_data);
-        // vdd = decoded_data['vdd'];
-        // temp = decoded_data['temp'];
-        rot_speed = decoded_data['rot_speed'];
-        grad = decoded_data['grad'];
-        _chartDataSpeed.add(TurbineData(counter, rot_speed));
-        _chartDataGrad.add(TurbineData(counter, grad));
+        data_val = decoded_data[widget.data];
+        _chartData.add(TurbineData(counter, data_val));
         counter++;
       });
     });
@@ -56,30 +53,21 @@ class _LivePlotState extends State<LivePlot> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            Expanded(
-              //   child: SfCartesianChart(
-              //     series: <ChartSeries>[
-              //       LineSeries<TurbineData, int>(
-              //           dataSource: _chartDataSpeed,
-              //           xValueMapper: (TurbineData speed, _) => speed.x,
-              //           yValueMapper: (TurbineData speed, _) => speed.speed),
-              //     ],
-              //     // primaryXAxis: DateTimeAxis(),
-              //
-              //     primaryXAxis: NumericAxis(
-              //       visibleMinimum:
-              //           _chartDataSpeed[_chartDataSpeed.length - 5].x.toDouble(),
-              //       visibleMaximum: counter + 2,
-              //     ),
-              //     primaryYAxis: NumericAxis(),
-              //     zoomPanBehavior: ZoomPanBehavior(
-              //       enablePanning: true,
-              //     ),
-              //   ),
-              child: chartWidget(chartData: _chartDataSpeed, counter: counter),
+            const SizedBox(
+              height: 100,
+            ),
+            Text(
+              widget.title,
+              style: kPlotLabelTextStyle,
+            ),
+            const SizedBox(
+              height: 50,
             ),
             Expanded(
-              child: chartWidget(chartData: _chartDataGrad, counter: counter),
+              child: chartWidget(chartData: _chartData, counter: counter),
+            ),
+            const SizedBox(
+              height: 150,
             ),
           ],
         ),
