@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:fyp_1/screens/live_data.dart';
 import 'firebase_options.dart';
 import 'constants.dart';
-import 'screens/live_plot.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

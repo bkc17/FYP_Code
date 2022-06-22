@@ -7,13 +7,12 @@ import 'live_plot.dart';
 
 class ReadData extends StatefulWidget {
   const ReadData({Key? key}) : super(key: key);
-
   @override
   State<ReadData> createState() => _ReadDataState();
 }
 
 class _ReadDataState extends State<ReadData> {
-  final _database = FirebaseDatabase.instance.ref('/data_current');
+  final _database = FirebaseDatabase.instance.ref('/Current data');
   var decoded_data;
   String vdd = '0';
   String temp = '0';
@@ -62,7 +61,7 @@ class _ReadDataState extends State<ReadData> {
                   data: 'vdd',
                   title: 'VDD (Volts)',
                 ),
-              ),
+              ), //vdd
               ReusableCardWidget(
                 title: 'Temperature (\u00B0C)',
                 data: temp,
@@ -70,7 +69,7 @@ class _ReadDataState extends State<ReadData> {
                   data: 'temp',
                   title: 'Temperature (\u00B0C)',
                 ),
-              ),
+              ), //temperature
               ReusableCardWidget(
                 title: 'Speed (rads/sec)',
                 data: rot_speed,
@@ -78,7 +77,7 @@ class _ReadDataState extends State<ReadData> {
                   data: 'rot_speed',
                   title: 'Speed (rads/sec)',
                 ),
-              ),
+              ), //rotation speed
               ReusableCardWidget(
                 title: 'Gradient (rads/s\u00B2)',
                 data: grad,
@@ -86,7 +85,7 @@ class _ReadDataState extends State<ReadData> {
                   data: 'grad',
                   title: 'Gradient (rads/s\u00B2)',
                 ),
-              ),
+              ), //gradient
               ReusableCardWidget(
                 title: 'Wind Speed (m/s)',
                 data: wind_speed,
@@ -94,7 +93,7 @@ class _ReadDataState extends State<ReadData> {
                   data: 'wind_speed',
                   title: 'Wind Speed (m/s)',
                 ),
-              ),
+              ), //wind speed
             ],
           ),
         ),

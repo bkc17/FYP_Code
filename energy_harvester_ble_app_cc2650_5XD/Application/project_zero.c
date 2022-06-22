@@ -72,6 +72,19 @@
  */
 // Advertising interval when device is discoverable (units of 625us, 160=100ms)
 #define DEFAULT_ADVERTISING_INTERVAL          1600
+//
+//#define DEFAULT_ENABLE_UPDATE_REQUEST         GAPROLE_LINK_PARAM_UPDATE_INITIATE_BOTH_PARAMS
+//// Minimum connection interval (units of 1.25ms, 80=100ms) if automatic
+//// parameter update request is enabled
+//#define DEFAULT_DESIRED_MIN_CONN_INTERVAL     800
+//// Maximum connection interval (units of 1.25ms, 800=1000ms) if automatic
+//// parameter update request is enabled
+//#define DEFAULT_DESIRED_MAX_CONN_INTERVAL     800
+//#define DEFAULT_DESIRED_SLAVE_LATENCY         0
+//// Supervision timeout value (units of 10ms, 1000=10s) if automatic parameter
+//// update request is enabled
+//#define DEFAULT_DESIRED_CONN_TIMEOUT          1000
+//#define DEFAULT_CONN_PAUSE_PERIPHERAL         6
 
 // Limited discoverable mode advertises for 30.72s, and then stops
 // General discoverable mode advertises indefinitely

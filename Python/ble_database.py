@@ -9,6 +9,11 @@ import os
 import pandas as pd
 from math import sqrt
 
+VDD_CHAR = "F000BEF204514000B000000000000000"
+TEMP_CHAR = "F000BEF104514000B000000000000000"
+SPEED_CHAR = "F000BEEF04514000B000000000000000"
+GRAD_CHAR = "F000BEF004514000B000000000000000"
+
 
 def calc_wind_speed(a, b, c):
     d = (b**2) - (4*a*c)
@@ -36,10 +41,10 @@ def ble_get_data(queue):
 
         print("Reading data...")
         while True:
-            vdd = float(device.char_read("F000BEF204514000B000000000000000").decode())/1000
-            temp = round((1035 - float(device.char_read("F000BEF104514000B000000000000000").decode()))/5.5,2)
-            rot_speed = int(device.char_read("F000BEEF04514000B000000000000000"))
-            grad = int(device.char_read("F000BEF004514000B000000000000000"))
+            vdd = float(device.char_read(VDD_CHAR).decode())/1000
+            temp = round((1035 - float(device.char_read(TEMP_CHAR).decode()))/5.5,2)
+            rot_speed = int(device.char_read(SPEED_CHAR))
+            grad = int(device.char_read(GRAD_CHAR))
             
 
             a = 0.625
@@ -56,7 +61,7 @@ def ble_get_data(queue):
             }
 
             queue.put(data)
-            time.sleep(0.1)
+            time.sleep(1)
     except KeyboardInterrupt:
         adapter.stop()
         # save_data()
@@ -99,14 +104,7 @@ def db_upload(queue):
             
         #Initial setting of data
         data_full = {
-        # "Full data":
-        #     {
-        #     "VDD": [0],
-        #     "Temperature": [0],
-        #     "Rotation Speed": [0],
-        #     "Gradient": [0]
-        #     },
-        "data_current":
+        "Current data":
             {
                 "VDD": 0,
                 "Temperature": 0,
@@ -134,14 +132,8 @@ def db_upload(queue):
                 wind_full.append(rec["wind_speed"])
 
                 data["Current data"] = rec
-                # data["Full data"] = {
-                #     "VDD": vdd_range,
-                #     "Temperature": temp_range,
-                #     "Rotation Speed": rot_range,
-                #     "Gradient": grad_range
-                # }
                 ref.update(data)
-                time.sleep(0.5)
+                time.sleep(1)
     except KeyboardInterrupt:
         save_data(vdd_full, temp_full, rot_full, grad_full, wind_full)
 
@@ -156,7 +148,7 @@ def main():
         db_process.join()
     except KeyboardInterrupt:
         db_process.terminate()
-        ble_process.close()
+        ble_process.terminate()
         exit(0)
 
 if __name__ == '__main__':

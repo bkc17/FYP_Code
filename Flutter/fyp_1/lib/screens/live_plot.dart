@@ -16,7 +16,7 @@ class LivePlot extends StatefulWidget {
 }
 
 class _LivePlotState extends State<LivePlot> {
-  final _database = FirebaseDatabase.instance.ref('/data_current');
+  final _database = FirebaseDatabase.instance.ref('/Current data');
   var decoded_data;
   int data_val = 0;
   int counter = 0;
